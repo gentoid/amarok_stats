@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/amarok_stats/main'
+
+AmarokStats::Main.new(ARGV).execute!
