@@ -7,5 +7,5 @@ gem 'mysql2'
 
 group :development, :text do
   gem 'rspec'
-  gem 'cucumber'
+  gem 'aruba'
 end
