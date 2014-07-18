@@ -5,3 +5,4 @@ require_relative '../lib/amarok_stats/stats'
 stats = AmarokStats::Stats.new
 stats.retrieve
 stats.calculate
+stats.save
