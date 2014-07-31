@@ -7,7 +7,6 @@ module AmarokStats
 
     def initialize
       @ratings = Hash.new(0)
-      @count = 0
       @query_result = []
     end
 
@@ -25,23 +24,23 @@ module AmarokStats
 
     def calculate
       @query_result.each(as: :array) do |rating|
-        @ratings[rating] += 1
-        @count += 1
+        @ratings[rating[0].to_s.to_sym] += 1
+        @ratings[:all] += 1
       end
     end
 
     def save
       connection = Mysql2::Client.new host: 'localhost', username: 'amarok', password: 'amarok', database: 'amarok_stats'
 
-      fields = []
-      values = []
-      @ratings.each do |rating, count|
-        fields += rating
-        values.push count
-      end
+      connection.query("SELECT `id`, `#{@ratings.keys.join('`, `')}` FROM counts ORDER BY id DESC LIMIT 1", symbolize_keys: true).each do |line|
+        id = line.delete :id
 
-      query = "INSERT INTO counts (`#{fields.join('`, `')}`, `all`) VALUES (#{values.join(', ')}, #{@count})"
-      connection.query query
+        if @ratings == line
+          connection.query "INSERT INTO count_doubles (count_id) VALUES (#{id})"
+        else
+          connection.query "INSERT INTO counts (`#{fields.join('`, `')}`) VALUES (#{values.join(', ')})"
+        end
+      end
     end
 
     def init_db
@@ -49,19 +48,25 @@ module AmarokStats
 
       mysql.query 'CREATE TABLE IF NOT EXISTS counts (
         id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
-         `0` INTEGER NOT NULL DEFAULT 0,
-         `1` INTEGER NOT NULL DEFAULT 0,
-         `2` INTEGER NOT NULL DEFAULT 0,
-         `3` INTEGER NOT NULL DEFAULT 0,
-         `4` INTEGER NOT NULL DEFAULT 0,
-         `5` INTEGER NOT NULL DEFAULT 0,
-         `6` INTEGER NOT NULL DEFAULT 0,
-         `7` INTEGER NOT NULL DEFAULT 0,
-         `8` INTEGER NOT NULL DEFAULT 0,
-         `9` INTEGER NOT NULL DEFAULT 0,
-        `10` INTEGER NOT NULL DEFAULT 0,
-        `all` INTEGER NOT NULL DEFAULT 0,
-        `datetime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP)'
+       `0` INTEGER NOT NULL DEFAULT 0,
+       `1` INTEGER NOT NULL DEFAULT 0,
+       `2` INTEGER NOT NULL DEFAULT 0,
+       `3` INTEGER NOT NULL DEFAULT 0,
+       `4` INTEGER NOT NULL DEFAULT 0,
+       `5` INTEGER NOT NULL DEFAULT 0,
+       `6` INTEGER NOT NULL DEFAULT 0,
+       `7` INTEGER NOT NULL DEFAULT 0,
+       `8` INTEGER NOT NULL DEFAULT 0,
+       `9` INTEGER NOT NULL DEFAULT 0,
+      `10` INTEGER NOT NULL DEFAULT 0,
+      `all` INTEGER NOT NULL DEFAULT 0,
+      `datetime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP)'
+
+      mysql.query 'CREATE TABLE IF NOT EXISTS count_doubles (
+        id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        `count_id` INTEGER NOT NULL,
+        `datetime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(count_id) REFERENCES counts(id) )'
     end
 
   end
