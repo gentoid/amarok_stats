@@ -38,7 +38,7 @@ module AmarokStats
         if @ratings == line
           connection.query "INSERT INTO count_doubles (count_id) VALUES (#{id})"
         else
-          connection.query "INSERT INTO counts (`#{fields.join('`, `')}`) VALUES (#{values.join(', ')})"
+          connection.query "INSERT INTO counts (`#{@ratings.keys.join('`, `')}`) VALUES (#{@ratings.values.join(', ')})"
         end
       end
     end
