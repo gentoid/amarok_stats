@@ -19,13 +19,13 @@ module AmarokStats
     def retrieve
       connection = Mysql2::Client.new host: 'localhost', username: 'amarok', password: 'amarok', database: 'amarokdb'
 
-      @query_result = connection.query 'SELECT rating FROM statistics WHERE deleted = 0'
+      @query_result = connection.query 'SELECT rating, count(*) as count FROM statistics WHERE deleted = 0 GROUP BY rating', symbolize_keys: true
     end
 
     def calculate
-      @query_result.each(as: :array) do |rating|
-        @ratings[rating[0].to_s.to_sym] += 1
-        @ratings[:all] += 1
+      @query_result.each do |line|
+        @ratings[line[:rating].to_s.to_sym] = line[:count]
+        @ratings[:all] += line[:count]
       end
     end
 
