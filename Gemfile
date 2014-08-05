@@ -6,5 +6,6 @@ gem 'mysql2'
 
 group :development, :text do
   gem 'rspec'
+  gem 'rspec-its'
   gem 'aruba'
 end
