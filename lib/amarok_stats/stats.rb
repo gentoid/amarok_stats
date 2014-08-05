@@ -1,4 +1,3 @@
-require 'sqlite3'
 require 'mysql2'
 
 module AmarokStats
