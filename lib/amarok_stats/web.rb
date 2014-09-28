@@ -23,17 +23,8 @@ class AmarokData
   private
 
   def data(table, fields)
-    # _fields = fields.join(', ') + datetime_fields.reduce('') { |acc, (key, val)| acc + ", #{val} AS #{key}" }
-    _fields = [:id] + fields + [:datetime]
-    data = @connection.query("SELECT #{_fields.join(', ')} FROM #{table} ORDER BY id").each(:as => :array)
-
-    {headers: _fields, data: data}
+    @connection.query("SELECT #{([:id] + fields + [:datetime]).join ', '} FROM #{table} ORDER BY id").each(:as => :hash)
   end
-
-  # def datetime_fields
-  #   field = 'datetime'
-  #   { year: "YEAR(#{field})", month: "MONTH(#{field})", day: "DAY(#{field})", hour: "HOUR(#{field})", minute: "MINUTE(#{field})" }
-  # end
 
 end
 
