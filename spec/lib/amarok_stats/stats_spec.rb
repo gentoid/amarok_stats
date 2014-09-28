@@ -6,6 +6,19 @@ describe AmarokStats::Stats do
     @stats = AmarokStats::Stats.new
   end
 
+  context 'testing' do
+    subject(:zombie) { AmarokStats::Stats.new }
+
+    it { is_expected.to be_instance_of AmarokStats::Stats }
+
+    it 'should stub' do
+      AmarokStats::Stats.stub(:original)
+      AmarokStats::Stats.original
+    end
+
+    it_behaves_like 'one'
+  end
+
   context '#retreive' do
     before do
       @connection = double
