@@ -2,11 +2,14 @@ require 'sinatra'
 require 'json'
 require 'mysql2'
 require 'slim'
+require 'dotenv'
+
+Dotenv.load
 
 class AmarokData
 
   def initialize
-    @connection = Mysql2::Client.new host: 'localhost', username: 'amarok', password: 'amarok', database: 'amarok_stats'
+    @connection = Mysql2::Client.new host: ENV['STAT_DB_HOST'], username: ENV['STAT_DB_USER'], password: ENV['STAT_DB_PASS'], database: ENV['STAT_DB_DBNAME']
   end
 
   def counts
